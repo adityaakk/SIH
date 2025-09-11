@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Exploration Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a237e, #00695c, #4a148c);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: #ffeb3b;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .nav-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #80deea;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .topic-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .topic-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #ffcc80;
+        }
+
+        .projects-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #c5e1a5;
+        }
+
+        .facts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .fact-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .fact-icon {
+            font-size: 2rem;
+            color: #f48fb1;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            height: 200px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.1);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Particle effect */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .topics-grid, .projects-container, .facts-container, .gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Animation for elements */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animated {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+
+<div class="container">
+    <header>
+        <h1><i class="fas fa-flask"></i> Chemistry Exploration Hub</h1>
+        <p class="subtitle">Discover the fascinating world of atoms, molecules, and reactions</p>
+        <div class="nav">
+            <a href="#topics" class="nav-btn"><i class="fas fa-atom"></i> Topics</a>
+            <a href="#projects" class="nav-btn"><i class="fas fa-vial"></i> Projects</a>
+            <a href="#facts" class="nav-btn"><i class="fas fa-lightbulb"></i> Facts</a>
+            <a href="#gallery" class="nav-btn"><i class="fas fa-images"></i> Gallery</a>
+        </div>
+    </header>
+
+    <section id="topics" class="section animated">
+        <h2 class="section-title"><i class="fas fa-book-open"></i> Chemistry Topics</h2>
+        <div class="topics-grid">
+            <div class="topic-card animated delay-1">
+                <h3 class="topic-title">Organic Chemistry</h3>
+                <p>Study of carbon-based compounds, their structure, properties, and reactions. Includes hydrocarbons, alcohols, and polymers.</p>
+            </div>
+            <div class="topic-card animated delay-2">
+                <h3 class="topic-title">Inorganic Chemistry</h3>
+                <p>Focuses on inorganic compounds like metals, minerals, and organometallic compounds. Explores their behavior and applications.</p>
+            </div>
+            <div class="topic-card animated delay-3">
+                <h3 class="topic-title">Physical Chemistry</h3>
+                <p>Examines how matter behaves on a molecular and atomic level and how chemical reactions occur using physics principles.</p>
+            </div>
+            <div class="topic-card animated delay-1">
+                <h3 class="topic-title">Analytical Chemistry</h3>
+                <p>Involves the separation, identification, and quantification of chemical components in natural and artificial materials.</p>
+            </div>
+            <div class="topic-card animated delay-2">
+                <h3 class="topic-title">Biochemistry</h3>
+                <p>Study of chemical processes within and relating to living organisms, including metabolism and molecular genetics.</p>
+            </div>
+            <div class="topic-card animated delay-3">
+                <h3 class="topic-title">Environmental Chemistry</h3>
+                <p>Focuses on chemical phenomena in the environment, including pollution and biogeochemical cycles.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section animated">
+        <h2 class="section-title"><i class="fas fa-vial"></i> Chemistry Projects</h2>
+        <div class="projects-container">
+            <div class="project-card animated delay-1">
+                <div class="project-img" style="background: linear-gradient(to bottom, #7b1fa2, #4a148c); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
+                    <i class="fas fa-vial"></i>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">pH Indicator from Cabbage</h3>
+                    <p>Create a natural pH indicator using red cabbage that changes color based on acidity or alkalinity.</p>
+                </div>
+            </div>
+            <div class="project-card animated delay-2">
+                <div class="project-img" style="background: linear-gradient(to bottom, #00695c, #004d40); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">Elephant Toothpaste</h3>
+                    <p>Create a foamy chemical reaction caused by the rapid decomposition of hydrogen peroxide.</p>
+                </div>
+            </div>
+            <div class="project-card animated delay-3">
+                <div class="project-img" style="background: linear-gradient(to bottom, #0277bd, #01579b); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
+                    <i class="fas fa-cookie"></i>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">Crystal Growing</h3>
+                    <p>Grow your own crystals using various salts and explore the process of crystallization.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="facts" class="section animated">
+        <h2 class="section-title"><i class="fas fa-lightbulb"></i> Amazing Chemistry Facts</h2>
+        <div class="facts-container">
+            <div class="fact-card animated delay-1">
+                <div class="fact-icon"><i class="fas fa-atom"></i></div>
+                <p>There are about 94 elements that occur naturally on Earth, but the universe as a whole has about 118 known elements.</p>
+            </div>
+            <div class="fact-card animated delay-2">
+                <div class="fact-icon"><i class="fas fa-tint"></i></div>
+                <p>Water is one of the few substances that is less dense as a solid than as a liquid, which is why ice floats.</p>
+            </div>
+            <div class="fact-card animated delay-3">
+                <div class="fact-icon"><i class="fas fa-bolt"></i></div>
+                <p>Lightning strikes produce ozone, which is why the air smells so fresh after a thunderstorm.</p>
+            </div>
+            <div class="fact-card animated delay-1">
+                <div class="fact-icon"><i class="fas fa-fire"></i></div>
+                <p>The only letter that doesn't appear on the periodic table is J. It was once believed that no element began with J.</p>
+            </div>
+            <div class="fact-card animated delay-2">
+                <div class="fact-icon"><i class="fas fa-weight"></i></div>
+                <p>A teaspoon of a neutron star would weigh about 6 billion tons due to its incredible density.</p>
+            </div>
+            <div class="fact-card animated delay-3">
+                <div class="fact-icon"><i class="fas fa-wind"></i></div>
+                <p>Helium is the only element that cannot be solidified by lowering the temperature at ordinary pressures.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="section animated">
+        <h2 class="section-title"><i class="fas fa-images"></i> Chemistry Gallery</h2>
+        <div class="gallery">
+            <div class="gallery-item animated delay-1">
+                <div class="gallery-img" style="background: linear-gradient(to bottom, #ff6f00, #ff8f00);"></div>
+                <div class="gallery-caption">Colorful chemical reactions</div>
+            </div>
+            <div class="gallery-item animated delay-2">
+                <div class="gallery-img" style="background: linear-gradient(to bottom, #ad1457, #880e4f);"></div>
+                <div class="gallery-caption">Laboratory equipment</div>
+            </div>
+            <div class="gallery-item animated delay-3">
+                <div class="gallery-img" style="background: linear-gradient(to bottom, #00695c, #004d40);"></div>
+                <div class="gallery-caption">Crystal structures</div>
+            </div>
+            <div class="gallery-item animated delay-1">
+                <div class="gallery-img" style="background: linear-gradient(to bottom, #283593, #1a237e);"></div>
+                <div class="gallery-caption">Molecular models</div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="animated">
+        <p>Chemistry Exploration Hub &copy; 2023 | Discover the wonders of chemistry</p>
+        <p>Created with <i class="fas fa-heart" style="color: #e91e63;"></i> for science enthusiasts</p>
+    </footer>
+</div>
+
+<script>
+    // Create particle effect on cursor movement
+    document.addEventListener('DOMContentLoaded', function() {
+        const particlesContainer = document.getElementById('particles');
+
+        // Create particles on mouse move
+        document.addEventListener('mousemove', function(e) {
+            createParticle(e.clientX, e.clientY);
+        });
+
+        // Create particles on touch move for mobile devices
+        document.addEventListener('touchmove', function(e) {
+            createParticle(e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+
+            // Random size between 3 and 8 pixels
+            const size = Math.random() * 5 + 3;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+
+            // Position at cursor
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+
+            // Random color with opacity
+            const colors = ['rgba(255, 255, 255, 0.6)', 'rgba(173, 216, 230, 0.6)',
+                'rgba(240, 128, 128, 0.6)', 'rgba(152, 251, 152, 0.6)'];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+            particlesContainer.appendChild(particle);
+
+            // Animate particle
+            const moveX = (Math.random() - 0.5) * 100;
+            const moveY = (Math.random() - 0.5) * 100;
+
+            particle.animate([
+                { transform: `translate(0, 0)`, opacity: 1 },
+                { transform: `translate(${moveX}px, ${moveY}px)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 1000 + 500,
+                easing: 'ease-out'
+            });
+
+            // Remove particle after animation
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
+
+        // Add scroll animation
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section, footer').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                window.scrollTo({
+                    top: targetElement.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

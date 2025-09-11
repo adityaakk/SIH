@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQuest - Interactive Coding Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-style: italic;
+            color: #ecf0f1;
+        }
+
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .challenges-panel {
+            flex: 1;
+            min-width: 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .challenge-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid #3498db;
+        }
+
+        .challenge-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .challenge-item.completed {
+            border-left-color: #2ecc71;
+        }
+
+        .challenge-item h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .challenge-difficulty {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        .easy {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .medium {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .hard {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .coding-area {
+            flex: 2;
+            min-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .editor-container {
+            background: #272822;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .editor-header {
+            background: #1c1d19;
+            color: #f8f8f2;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #code-editor {
+            width: 100%;
+            height: 300px;
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border: none;
+            resize: none;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        #code-editor:focus {
+            outline: none;
+        }
+
+        .output-container {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        #output {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 200px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        #run-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        #run-btn:hover {
+            background: #2980b9;
+        }
+
+        #submit-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        #submit-btn:hover {
+            background: #27ae60;
+        }
+
+        .achievements-panel {
+            flex: 1;
+            min-width: 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .badges-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 15px;
+        }
+
+        .badge {
+            width: 80px;
+            height: 80px;
+            background: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            position: relative;
+        }
+
+        .badge.earned {
+            background: linear-gradient(135deg, #ffce54, #fcb64c);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge.locked {
+            filter: grayscale(100%);
+            opacity: 0.7;
+        }
+
+        .badge-info {
+            position: absolute;
+            bottom: -25px;
+            font-size: 0.7rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .coding-area {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>CodeQuest</h1>
+        <p class="tagline">Learn to code through interactive challenges and earn rewards!</p>
+    </header>
+
+    <div class="main-content">
+        <div class="challenges-panel">
+            <h2>Coding Challenges</h2>
+            <div class="challenge-item completed">
+                <h3>Hello World</h3>
+                <span class="challenge-difficulty easy">Easy</span>
+                <p>Write a program that prints "Hello, World!" to the console.</p>
+            </div>
+            <div class="challenge-item completed">
+                <h3>Simple Calculator</h3>
+                <span class="challenge-difficulty easy">Easy</span>
+                <p>Create a basic calculator that can add two numbers.</p>
+            </div>
+            <div class="challenge-item">
+                <h3>FizzBuzz</h3>
+                <span class="challenge-difficulty medium">Medium</span>
+                <p>Print numbers from 1 to 100 with multiples of 3 as "Fizz", multiples of 5 as "Buzz".</p>
+            </div>
+            <div class="challenge-item">
+                <h3>Palindrome Checker</h3>
+                <span class="challenge-difficulty medium">Medium</span>
+                <p>Write a function that checks if a word is a palindrome.</p>
+            </div>
+            <div class="challenge-item">
+                <h3>To-Do List</h3>
+                <span class="challenge-difficulty hard">Hard</span>
+                <p>Create a interactive to-do list with add, remove, and mark as complete functions.</p>
+            </div>
+        </div>
+
+        <div class="coding-area">
+            <div class="editor-container">
+                <div class="editor-header">
+                    <span>JavaScript Editor</span>
+                    <span>Challenge: FizzBuzz</span>
+                </div>
+                <textarea id="code-editor">// Write your code here
+// Print numbers from 1 to 100
+// For multiples of 3, print "Fizz"
+// For multiples of 5, print "Buzz"
+// For multiples of both, print "FizzBuzz"
+
+for (let i = 1; i <= 100; i++) {
+  if (i % 3 === 0 && i % 5 === 0) {
+    console.log("FizzBuzz");
+  } else if (i % 3 === 0) {
+    console.log("Fizz");
+  } else if (i % 5 === 0) {
+    console.log("Buzz");
+  } else {
+    console.log(i);
+  }
+}</textarea>
+            </div>
+
+            <div class="output-container">
+                <div class="output-header">
+                    <h3>Output</h3>
+                    <div class="buttons">
+                        <button id="run-btn">Run Code</button>
+                        <button id="submit-btn">Submit Solution</button>
+                    </div>
+                </div>
+                <div id="output">Output will appear here after running your code.</div>
+            </div>
+
+            <div class="success-message" id="success-message">
+                <strong>Congratulations!</strong> You completed the FizzBuzz challenge! You earned 3 stars and a new badge!
+            </div>
+        </div>
+
+        <div class="achievements-panel">
+            <h2>Achievements</h2>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Stars</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Challenges</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Badges</div>
+                </div>
+            </div>
+
+            <h3>Your Badges</h3>
+            <div class="badges-container">
+                <div class="badge earned">
+                    ⭐
+                    <div class="badge-info">First Code</div>
+                </div>
+                <div class="badge earned">
+                    🚀
+                    <div class="badge-info">Speed Coder</div>
+                </div>
+                <div class="badge earned">
+                    🧠
+                    <div class="badge-info">Problem Solver</div>
+                </div>
+                <div class="badge locked">
+                    🔥
+                    <div class="badge-info">Hot Streak</div>
+                </div>
+                <div class="badge locked">
+                    💡
+                    <div class="badge-info">Innovator</div>
+                </div>
+                <div class="badge locked">
+                    🏆
+                    <div class="badge-info">Champion</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const runBtn = document.getElementById('run-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const codeEditor = document.getElementById('code-editor');
+        const output = document.getElementById('output');
+        const successMessage = document.getElementById('success-message');
+
+        // Run button functionality
+        runBtn.addEventListener('click', function() {
+            const code = codeEditor.value;
+            output.textContent = '';
+
+            // Capture console.log output
+            const originalConsoleLog = console.log;
+            console.log = function() {
+                originalConsoleLog.apply(console, arguments);
+                output.textContent += Array.from(arguments).join(' ') + '\n';
+            };
+
+            try {
+                eval(code);
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+            }
+
+            // Restore original console.log
+            console.log = originalConsoleLog;
+        });
+
+        // Submit button functionality
+        submitBtn.addEventListener('click', function() {
+            const code = codeEditor.value;
+            output.textContent = '';
+
+            // Capture console.log output
+            const originalConsoleLog = console.log;
+            console.log = function() {
+                originalConsoleLog.apply(console, arguments);
+                output.textContent += Array.from(arguments).join(' ') + '\n';
+            };
+
+            try {
+                eval(code);
+
+                // Simulate checking the solution (in a real app, this would be more sophisticated)
+                setTimeout(function() {
+                    // For demo purposes, we'll assume the code is correct
+                    successMessage.style.display = 'block';
+
+                    // Update UI to show challenge completion
+                    document.querySelectorAll('.challenge-item')[2].classList.add('completed');
+
+                    // Update stars count
+                    document.querySelector('.stat-value').textContent = '15';
+                }, 1000);
+
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+            }
+
+            // Restore original console.log
+            console.log = originalConsoleLog;
+        });
+
+        // Add click event to challenge items
+        const challengeItems = document.querySelectorAll('.challenge-item');
+        challengeItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all items
+                challengeItems.forEach(i => i.classList.remove('active'));
+                // Add active class to clicked item
+                this.classList.add('active');
+
+                // Update editor header with challenge name
+                document.querySelector('.editor-header span:last-child').textContent =
+                    'Challenge: ' + this.querySelector('h3').textContent;
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Enhanced Personalization & User Interaction Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #222;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #007bff;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+            font-size: 1.8rem;
+        }
+        section {
+            background: rgba(248, 249, 250, 0.8);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        /* User Dashboard */
+        #userDashboard {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        #badges, #streak, #recentActivity {
+            flex: 1 1 250px;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            padding: 1.5rem;
+            border-radius: 10px;
+            color: #333;
+            transition: background 0.3s ease;
+        }
+        #badges:hover, #streak:hover, #recentActivity:hover {
+            background: linear-gradient(45deg, #fecfef, #ff9a9e);
+        }
+        #badges img {
+            width: 60px;
+            height: 60px;
+            margin: 0.5rem;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        #badges img:hover {
+            transform: scale(1.1);
+        }
+        #streak .streak-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        #streak .streak-button:hover {
+            background: #218838;
+        }
+        /* Profile Avatar */
+        #profileAvatar {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        #avatarPreview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #ddd;
+            object-fit: cover;
+            border: 3px solid #007bff;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        #avatarPreview:hover {
+            border-color: #0056b3;
+            transform: rotate(10deg);
+        }
+        #avatarOptions img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+        #avatarOptions img.selected {
+            border-color: #007bff;
+            transform: scale(1.1);
+        }
+        #avatarOptions img:hover {
+            transform: scale(1.05);
+        }
+        #avatarUpload {
+            margin-top: 1rem;
+        }
+        .avatar-widget button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 0.5rem;
+            transition: background 0.3s;
+        }
+        .avatar-widget button:hover {
+            background: #0056b3;
+        }
+        /* Leaderboard */
+        #leaderboardFilters {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        #leaderboardFilters select, #leaderboardFilters .btn {
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        #leaderboardFilters .btn {
+            background: #17a2b8;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        #leaderboardFilters .btn:hover {
+            background: #138496;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+        tr:hover td {
+            background: rgba(0, 123, 255, 0.1);
+        }
+        /* Comments Section */
+        #commentsSection form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        #commentsSection textarea {
+            resize: vertical;
+            min-height: 80px;
+            padding: 0.75rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        #commentsSection textarea:focus {
+            border-color: #007bff;
+        }
+        #commentsSection button {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        #commentsSection button:hover {
+            background: #e0a800;
+        }
+        #commentsList {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 1rem;
+            border-radius: 10px;
+            background: #fafafa;
+            transition: background 0.3s;
+        }
+        .comment {
+            border-bottom: 1px solid #ddd;
+            padding: 0.75rem 0;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .comment:last-child {
+            border-bottom: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Teacher Dashboard */
+        #teacherDashboard table th, #teacherDashboard table td {
+            padding: 1rem;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        #teacherDashboard table th {
+            background: #28a745;
+            color: white;
+        }
+        #teacherDashboard .track-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.7rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        #teacherDashboard .track-btn:hover {
+            background: #c82333;
+        }
+        /* Modal for Extra Info */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s;
+        }
+        .modal-content {
+            background: white;
+            margin: 15% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        /* Responsive */
+        @media (max-width: 700px) {
+            #userDashboard {
+                flex-direction: column;
+            }
+            #badges, #streak, #recentActivity {
+                flex: 1 1 100%;
+            }
+            #leaderboardFilters {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Enhanced Personalization & User Interaction Demo</h1>
+
+    <!-- Background Image Widget -->
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYpJWGa_TjIo0CtvuiE7LHjgkz42yIBesoLw&s" alt="Dynamic background scene with glowing particles and vibrant colors representing interactive learning environment" style="max-width: 100%; border-radius: 10px;" />
+    </div>
+
+    <!-- 1. User Dashboard -->
+    <section aria-label="User Dashboard">
+        <h2>User Dashboard</h2>
+        <div id="userDashboard">
+            <div id="badges" aria-label="User badges">
+                <h3>Badges</h3>
+                <div id="badgeList" aria-live="polite" aria-atomic="true">
+                    <!-- badges inserted here -->
+                </div>
+            </div>
+            <div id="streak" aria-label="Current streak">
+                <h3>Current Streak</h3>
+                <p id="streakCount" style="font-size: 2rem; font-weight: bold;">0 days</p>
+                <button class="streak-button" onclick="alert('Streak extended!')">Extend Streak</button>
+            </div>
+            <div id="recentActivity" aria-label="Recent activity">
+                <h3>Recent Activity</h3>
+                <ul id="activityList" aria-live="polite" aria-atomic="true">
+                    <!-- recent activities inserted here -->
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Profile Avatars -->
+    <section aria-label="Profile Avatar Selection">
+        <h2>Profile Avatar</h2>
+        <div id="profileAvatar">
+            <img id="avatarPreview" src="https://i.pravatar.cc/120?img=10" alt="Profile avatar preview" />
+            <div class="avatar-widget">
+                <label for="avatarUpload">Upload your own image:</label><br />
+                <input type="file" id="avatarUpload" accept="image/*" aria-describedby="uploadHelp" />
+                <small id="uploadHelp">Max size 2MB</small>
+                <p>Or select a cartoon avatar:</p>
+                <div id="avatarOptions" role="list" aria-label="Cartoon avatar options">
+                    <!-- cartoon avatars with alt text -->
+                    <img src="https://i.pravatar.cc/70?img=1" alt="Fun cartoon avatar of a smiling girl with pigtails" role="listitem" tabindex="0" />
+                    <img src="https://i.pravatar.cc/70?img=2" alt="Playful cartoon avatar of a boy with glasses" role="listitem" tabindex="0" />
+                    <img src="https://i.pravatar.cc/70?img=3" alt="Adventurous cartoon avatar of a explorer" role="listitem" tabindex="0" />
+                    <img src="https://i.pravatar.cc/70?img=4" alt="Creative cartoon avatar of an artist" role="listitem" tabindex="0" />
+                    <img src="https://i.pravatar.cc/70?img=5" alt="Energetic cartoon avatar of a athlete" role="listitem" tabindex="0" />
+                </div>
+                <button onclick="randomAvatar()">Random Avatar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Custom Leaderboards -->
+    <section aria-label="Custom Leaderboards">
+        <h2>Custom Leaderboards</h2>
+        <div id="leaderboardFilters">
+            <select id="filterClass" aria-controls="leaderboardTable">
+                <option value="all">All Classes</option>
+                <option value="math">Math</option>
+                <option value="science">Science</option>
+                <option value="history">History</option>
+            </select>
+            <select id="filterSchool" aria-controls="leaderboardTable">
+                <option value="all">All Schools</option>
+                <option value="northHigh">North High</option>
+                <option value="eastHigh">East High</option>
+                <option value="westHigh">West High</option>
+            </select>
+            <select id="filterRegion" aria-controls="leaderboardTable">
+                <option value="all">All Regions</option>
+                <option value="north">North</option>
+                <option value="south">South</option>
+                <option value="central">Central</option>
+            </select>
+            <button class="btn" onclick="resetFilters()">Reset Filters</button>
+            <button class="btn" onclick="openModal('leaderboard')">View Details</button>
+        </div>
+        <table id="leaderboardTable" aria-live="polite" aria-atomic="true">
+            <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Name</th>
+                <th>Class</th>
+                <th>School</th>
+                <th>Region</th>
+                <th>Points</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- leaderboard rows inserted here -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 4. Comments/Feedback Section -->
+    <section id="commentsSection" aria-label="Comments and Feedback">
+        <h2>Comments / Feedback</h2>
+        <form id="commentForm" aria-describedby="commentHelp">
+            <label for="commentInput">Leave your feedback:</label>
+            <textarea id="commentInput" required placeholder="Write your comment here..." rows="3"></textarea>
+            <button type="submit">Submit Feedback</button>
+            <small id="commentHelp">Your feedback helps us improve courses.</small>
+        </form>
+        <div id="commentsList" aria-live="polite" aria-atomic="true" tabindex="0">
+            <!-- comments inserted here -->
+        </div>
+    </section>
+
+    <!-- 5. Teacher Dashboard -->
+    <section id="teacherDashboard" aria-label="Teacher Dashboard">
+        <h2>Teacher Dashboard</h2>
+        <table aria-describedby="teacherDesc">
+            <caption id="teacherDesc">Track progress of multiple students</caption>
+            <thead>
+            <tr>
+                <th>Student</th>
+                <th>Badges Earned</th>
+                <th>Current Streak (days)</th>
+                <th>Last Activity</th>
+                <th>XP</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="teacherTableBody">
+            <!-- teacher data inserted here -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Modal for Extra Info -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Additional Info</h3>
+            <p id="modalText">More details about the selected item.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. User Dashboard Data
+    const userData = {
+        badges: [
+            { name: "5 Lessons Completed", img: "https://img.icons8.com/color/48/000000/medal.png" },
+            { name: "7 Day Login Streak", img: "https://img.icons8.com/color/48/000000/fire-element.png" },
+            { name: "90%+ Quiz Score", img: "https://img.icons8.com/color/48/000000/trophy.png" }
+        ],
+        streak: 7,
+        recentActivity: [
+            "Completed Lesson 5: Algebra Basics",
+            "Scored 95% on Quiz 3",
+            "Logged in 7 days in a row"
+        ]
+    };
+
+    function renderUserDashboard() {
+        const badgeList = document.getElementById('badgeList');
+        badgeList.innerHTML = '';
+        userData.badges.forEach(badge => {
+            const img = document.createElement('img');
+            img.src = badge.img;
+            img.alt = badge.name;
+            img.title = badge.name;
+            img.onclick = () => openModal('badge', badge.name);
+            badgeList.appendChild(img);
+        });
+
+        document.getElementById('streakCount').textContent = `${userData.streak} days`;
+
+        const activityList = document.getElementById('activityList');
+        activityList.innerHTML = '';
+        userData.recentActivity.forEach(activity => {
+            const li = document.createElement('li');
+            li.textContent = activity;
+            li.onclick = () => openModal('activity', activity);
+            activityList.appendChild(li);
+        });
+    }
+
+    // 2. Profile Avatar Upload & Selection
+    const avatarPreview = document.getElementById('avatarPreview');
+    const avatarUpload = document.getElementById('avatarUpload');
+    const avatarOptions = document.getElementById('avatarOptions');
+
+    avatarUpload.addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) { // 2MB limit
+            alert('File size exceeds 2MB. Please choose a smaller file.');
+            avatarUpload.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            avatarPreview.src = event.target.result;
+            clearSelectedAvatars();
+        };
+        reader.readAsDataURL(file);
+    });
+
+    function clearSelectedAvatars() {
+        avatarOptions.querySelectorAll('img').forEach(img => img.classList.remove('selected'));
+    }
+
+    avatarOptions.querySelectorAll('img').forEach(img => {
+        img.addEventListener('click', () => {
+            avatarPreview.src = img.src;
+            clearSelectedAvatars();
+            img.classList.add('selected');
+            avatarUpload.value = '';
+        });
+        img.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                img.click();
+            }
+        });
+    });
+
+    function randomAvatar() {
+        const randomId = Math.floor(Math.random() * 100) + 1;
+        avatarPreview.src = `https://i.pravatar.cc/120?img=${randomId}`;
+        clearSelectedAvatars();
+        avatarUpload.value = '';
+    }
+
+    // 3. Custom Leaderboards
+    const leaderboardData = [
+        { name: "Alice", class: "math", school: "northHigh", region: "north", points: 1500 },
+        { name: "Bob", class: "science", school: "eastHigh", region: "south", points: 1400 },
+        { name: "Charlie", class: "history", school: "westHigh", region: "central", points: 1300 },
+        { name: "Diana", class: "math", school: "northHigh", region: "north", points: 1600 },
+        { name: "Ethan", class: "science", school: "eastHigh", region: "south", points: 1250 },
+        { name: "Fiona", class: "history", school: "westHigh", region: "central", points: 1350 },
+        { name: "George", class: "math", school: "northHigh", region: "north", points: 1550 },
+        { name: "Hannah", class: "science", school: "eastHigh", region: "south", points: 1450 }
+    ];
+
+    const filterClass = document.getElementById('filterClass');
+    const filterSchool = document.getElementById('filterSchool');
+    const filterRegion = document.getElementById('filterRegion');
+    const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
+
+    function renderLeaderboard() {
+        const classVal = filterClass.value;
+        const schoolVal = filterSchool.value;
+        const regionVal = filterRegion.value;
+
+        let filtered = leaderboardData.filter(item => {
+            return (classVal === 'all' || item.class === classVal) &&
+                (schoolVal === 'all' || item.school === schoolVal) &&
+                (regionVal === 'all' || item.region === regionVal);
+        });
+
+        // Sort descending by points
+        filtered.sort((a,b) => b.points - a.points);
+
+        leaderboardTableBody.innerHTML = '';
+        filtered.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td onclick="openModal('student', '${item.name}')">${item.name}</td>
+          <td>${capitalize(item.class)}</td>
+          <td>${formatSchool(item.school)}</td>
+          <td>${capitalize(item.region)}</td>
+          <td>${item.points}</td>
+        `;
+            leaderboardTableBody.appendChild(tr);
+        });
+
+        if(filtered.length === 0) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="6" style="text-align:center; font-style: italic;">No results found.</td>`;
+            leaderboardTableBody.appendChild(tr);
+        }
+    }
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+    function formatSchool(school) {
+        switch(school) {
+            case 'northHigh': return 'North High';
+            case 'eastHigh': return 'East High';
+            case 'westHigh': return 'West High';
+            default: return school;
+        }
+    }
+
+    filterClass.addEventListener('change', renderLeaderboard);
+    filterSchool.addEventListener('change', renderLeaderboard);
+    filterRegion.addEventListener('change', renderLeaderboard);
+
+    function resetFilters() {
+        filterClass.value = 'all';
+        filterSchool.value = 'all';
+        filterRegion.value = 'all';
+        renderLeaderboard();
+    }
+
+    // 4. Comments / Feedback Section
+    const commentForm = document.getElementById('commentForm');
+    const commentInput = document.getElementById('commentInput');
+    const commentsList = document.getElementById('commentsList');
+
+    // Load comments from localStorage or start empty
+    let comments = JSON.parse(localStorage.getItem('comments')) || [];
+
+    function renderComments() {
+        commentsList.innerHTML = '';
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<p style="font-style: italic;">No comments yet.</p>';
+            return;
+        }
+        comments.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'comment';
+            div.textContent = c;
+            commentsList.appendChild(div);
+        });
+    }
+
+    commentForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const text = commentInput.value.trim();
+        if (text.length === 0) return;
+        comments.push(text);
+        localStorage.setItem('comments', JSON.stringify(comments));
+        commentInput.value = '';
+        renderComments();
+    });
+
+    // 5. Teacher Dashboard Data
+    const teacherData = [
+        { student: "Alice", badges: 5, streak: 7, lastActivity: "2024-06-10", xp: 1500 },
+        { student: "Bob", badges: 4, streak: 3, lastActivity: "2024-06-09", xp: 1400 },
+        { student: "Charlie", badges: 3, streak: 5, lastActivity: "2024-06-08", xp: 1300 },
+        { student: "Diana", badges: 6, streak: 10, lastActivity: "2024-06-10", xp: 1600 },
+        { student: "Ethan", badges: 2, streak: 1, lastActivity: "2024-06-07", xp: 1250 }
+    ];
+
+    function renderTeacherDashboard() {
+        const tbody = document.getElementById('teacherTableBody');
+        tbody.innerHTML = '';
+        teacherData.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+          <td>${item.student}</td>
+          <td>${item.badges}</td>
+          <td>${item.streak}</td>
+          <td>${item.lastActivity}</td>
+          <td>${item.xp}</td>
+          <td><button class="track-btn" onclick="trackStudent('${item.student}')">Track</button></td>
+        `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function trackStudent(name) {
+        alert(`Tracking progress for ${name}`);
+    }
+
+    // Modal Functions
+    const modal = document.getElementById('modal');
+    const modalText = document.getElementById('modalText');
+
+    function openModal(type, info = '') {
+        modalText.textContent = `Details for ${type}: ${info}`;
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // Initial Renders
+    renderUserDashboard();
+    renderLeaderboard();
+    renderComments();
+    renderTeacherDashboard();
+</script>
+</body>
+</html>
+</content>
+</create_file>

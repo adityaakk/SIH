@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Virtual Labs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4361EE',
+                        secondary: '#3A0CA3',
+                        science: '#4361EE',
+                        technology: '#3A0CA3',
+                        engineering: '#F72585',
+                        math: '#4CC9F0',
+                        physics: '#7209B7',
+                        chemistry: '#F72585',
+                        biology: '#4CC9F0'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .lab-container {
+            transition: all 0.3s ease;
+        }
+
+        .lab-window {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .lab-toolbar {
+            background: #2D3748;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            justify-content: space-between;
+        }
+
+        .lab-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .lab-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .close { background: #F56565; }
+        .minimize { background: #F6E05E; }
+        .maximize { background: #48BB78; }
+
+        .lab-content {
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .equipment {
+            position: absolute;
+            cursor: grab;
+            transition: transform 0.2s;
+        }
+
+        .equipment:active {
+            cursor: grabbing;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-option {
+            transition: all 0.2s;
+        }
+
+        .quiz-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .floating-tool {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .subject-card {
+            transition: all 0.3s;
+            border-left: 4px solid;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .physics { border-left-color: #7209B7; }
+        .chemistry { border-left-color: #F72585; }
+        .biology { border-left-color: #4CC9F0; }
+
+        .simulation-area {
+            background: #EDF2F7;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+<!-- Navigation -->
+<nav class="bg-white shadow-lg py-4">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">VL</div>
+            <span class="text-xl font-bold text-primary">STEM Virtual Labs</span>
+        </div>
+
+        <div class="hidden md:flex space-x-8">
+            <a href="#" class="text-primary font-medium">Home</a>
+            <a href="#" class="hover:text-primary transition">Labs</a>
+            <a href="#" class="hover:text-primary transition">Quizzes</a>
+            <a href="#" class="hover:text-primary transition">Resources</a>
+            <a href="#" class="hover:text-primary transition">Help</a>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition">Login</button>
+            <button class="md:hidden">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-center mb-2">Virtual STEM Labs</h1>
+    <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">Interactive virtual laboratories for hands-on learning in physics, chemistry, and biology</p>
+
+    <!-- Subject Tabs -->
+    <div class="bg-white rounded-xl shadow-md p-2 mb-8 max-w-4xl mx-auto">
+        <div class="flex flex-wrap justify-center gap-2">
+            <button class="subject-tab py-3 px-6 rounded-lg font-medium transition active" data-tab="physics">
+                <i class="fas fa-atom mr-2"></i>Physics Lab
+            </button>
+            <button class="subject-tab py-3 px-6 rounded-lg font-medium transition" data-tab="chemistry">
+                <i class="fas fa-flask mr-2"></i>Chemistry Lab
+            </button>
+            <button class="subject-tab py-3 px-6 rounded-lg font-medium transition" data-tab="biology">
+                <i class="fas fa-dna mr-2"></i>Biology Lab
+            </button>
+            <button class="subject-tab py-3 px-6 rounded-lg font-medium transition" data-tab="quiz">
+                <i class="fas fa-brain mr-2"></i>Interactive Quiz
+            </button>
+        </div>
+    </div>
+
+    <!-- Lab Content -->
+    <div class="max-w-6xl mx-auto">
+        <!-- Physics Lab -->
+        <div id="physics" class="tab-content active">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="lab-container">
+                    <h2 class="text-2xl font-bold mb-4">Physics Laboratory</h2>
+                    <p class="text-gray-600 mb-6">Explore principles of mechanics, electricity, and optics through interactive simulations. Drag and drop equipment to set up experiments.</p>
+
+                    <div class="bg-white p-4 rounded-xl shadow-md mb-6">
+                        <h3 class="text-lg font-bold mb-3">Current Experiment: Pendulum Motion</h3>
+                        <p class="mb-4">Investigate how pendulum length affects oscillation period</p>
+                        <div class="flex items-center gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Pendulum Length</label>
+                                <input type="range" min="10" max="100" value="50" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Mass</label>
+                                <input type="range" min="10" max="100" value="50" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+                        <button class="bg-physics text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition">
+                            <i class="fas fa-play mr-2"></i>Start Experiment
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="subject-card physics bg-white p-4 rounded-xl shadow-md">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 text-physics flex items-center justify-center mb-3">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3 class="font-bold mb-2">Electricity</h3>
+                            <p class="text-sm text-gray-600">Circuit building and Ohm's Law experiments</p>
+                        </div>
+                        <div class="subject-card physics bg-white p-4 rounded-xl shadow-md">
+                            <div class="w-12 h-12 rounded-full bg-purple-100 text-physics flex items-center justify-center mb-3">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <h3 class="font-bold mb-2">Optics</h3>
+                            <p class="text-sm text-gray-600">Light reflection and refraction experiments</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lab-window">
+                    <div class="lab-toolbar">
+                        <div class="lab-buttons">
+                            <div class="lab-button close"></div>
+                            <div class="lab-button minimize"></div>
+                            <div class="lab-button maximize"></div>
+                        </div>
+                        <div class="text-white text-sm">Pendulum Simulation</div>
+                        <div class="w-40"></div>
+                    </div>
+                    <div class="lab-content simulation-area flex items-center justify-center">
+                        <div class="pendulum-setup relative">
+                            <div class="w-48 h-1 bg-gray-400"></div>
+                            <div class="h-40 w-px bg-gray-400 ml-24"></div>
+                            <div class="w-6 h-6 rounded-full bg-physics absolute top-40 left-23"></div>
+                            <div class="w-px h-40 bg-gray-400 absolute top-0 left-24" style="transform-origin: top center; transform: rotate(30deg);">
+                                <div class="w-6 h-6 rounded-full bg-physics absolute bottom-0 left-[-11px]"></div>
+                            </div>
+                        </div>
+
+                        <div class="floating-tool" style="top: 20px; left: 20px;">
+                            <i class="fas fa-ruler-combined text-gray-600 text-xl mb-2"></i>
+                            <span class="text-xs">Ruler</span>
+                        </div>
+
+                        <div class="floating-tool" style="bottom: 20px; right: 20px;">
+                            <i class="fas fa-stopwatch text-gray-600 text-xl mb-2"></i>
+                            <span class="text-xs">Stopwatch</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chemistry Lab -->
+        <div id="chemistry" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="lab-container">
+                    <h2 class="text-2xl font-bold mb-4">Chemistry Laboratory</h2>
+                    <p class="text-gray-600 mb-6">Perform titrations, mix chemicals, and observe reactions in a safe virtual environment. Learn lab safety and procedures.</p>
+
+                    <div class="bg-white p-4 rounded-xl shadow-md mb-6">
+                        <h3 class="text-lg font-bold mb-3">Current Experiment: Acid-Base Titration</h3>
+                        <p class="mb-4">Determine the concentration of an unknown acid solution</p>
+                        <div class="flex items-center gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Acid Volume</label>
+                                <input type="range" min="10" max="100" value="50" class="w-full h-2 bg-pink-100 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Base Concentration</label>
+                                <input type="range" min="10" max="100" value="50" class="w-full h-2 bg-pink-100 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+                        <button class="bg-chemistry text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition">
+                            <i class="fas fa-vial mr-2"></i>Start Titration
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="subject-card chemistry bg-white p-4 rounded-xl shadow-md">
+                            <div class="w-12 h-12 rounded-full bg-pink-100 text-chemistry flex items-center justify-center mb-3">
+                                <i class="fas fa-vial"></i>
+                            </div>
+                            <h3 class="font-bold mb-2">Reactions</h3>
+                            <p class="text-sm text-gray-600">Chemical reactions and stoichiometry</p>
+                        </div>
+                        <div class="subject-card chemistry bg-white p-4 rounded-xl shadow-md">
+                            <div class="w-12 h-12 rounded-full bg-pink-100 text-chemistry flex items-center justify-center mb-3">
+                                <i class="fas fa-temperature-high"></i>
+                            </div>
+                            <h3 class="font-bold mb-2">Thermochemistry</h3>
+                            <p class="text-sm text-gray-600">Heat transfer in chemical reactions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lab-window">
+                    <div class="lab-toolbar">
+                        <div class="lab-buttons">
+                            <div class="lab-button close"></div>
+                            <div class="lab-button minimize"></div>
+                            <div class="lab-button maximize"></div>
+                        </div>
+                        <div class="text-white text-sm">Titration Simulation</div>
+                        <div class="w-40"></div>
+                    </div>
+                    <div class="lab-content simulation-area flex items-center justify-center">
+                        <div class="titration-setup relative">
+                            <div class="w-40 h-40 rounded-full border-4 border-gray-300 flex items-center justify-center">
+                                <div class="w-32 h-32 rounded-full bg-blue-50 border border-gray-200"></div>
+                            </div>
+                            <div class="burette absolute top-0 left-1/2 transform -translate-x-1/2">
+                                <div class="w-6 h-40 bg-gray-100 border border-gray-300 rounded-t-lg">
+                                    <div class="liquid h-20 bg-blue-200 w-full"></div>
+                                </div>
+                                <div class="w-8 h-2 bg-gray-400 mx-auto"></div>
+                            </div>
+                            <div class="flask absolute bottom-10 left-1/2 transform -translate-x-1/2">
+                                <div class="w-20 h-16 bg-gray-100 border border-gray-300 rounded-b-lg"></div>
+                                <div class="w-24 h-2 bg-gray-100 border border-gray-300 rounded-b-lg mx-auto"></div>
+                                <div class="liquid h-8 bg-pink-200 w-16 mx-auto rounded-b-lg"></div>
+                            </div>
+                        </div>
+
+                        <div class="floating-tool" style="top: 20px; left: 20px;">
+                            <i class="fas fa-vial text-gray-600 text-xl mb-2"></i>
+                            <span class="text-xs">Phenolphthalein</span>
+                        </div>
+
+                        <div class="floating-tool" style="bottom: 20px; right: 20px;">
+                            <i class="fas fa-tint text-gray-600 text-xl mb-2"></i>
+                            <span class="text-xs">Indicator</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biology Lab -->
+        <div id="biology" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="lab-container">
+                    <h2 class="text-2xl font-bold mb-4">Biology Laboratory</h2>
+                    <p class="text-gray-600 mb-6">Explore microscopic organisms, dissect virtual specimens, and learn about biological processes through interactive simulations.</p>
+
+                    <div class="bg-white p-4 rounded-xl shadow-md mb-6">
+                        <h3 class="text-lg font-bold mb-3">Current Experiment: Microscope Exploration</h3>
+                        <p class="mb-4">Observe plant cells under different magnification levels</p>
+                        <div class="flex items-center gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Magnification</label>
+                                <input type="range" min="10" max="100" value="50" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Focus</label>
+                                <input type="range" min="10" max="100" value="50" class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+                        <button class="bg-biology text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition">
+                            <i class="fas fa-microscope mr-2"></i>View Sample
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="subject-card biology bg-white p-4 rounded-xl shadow-md">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 text-biology flex items-center justify-center mb-3">
+                                <i class="fas fa-dna"></i>
+                            </div>
+                            <h3 class="font-bold mb-2">Genetics</h3>
+                            <p class="text-sm text-gray-600">DNA extraction and genetic inheritance</p>
+                        </div>
+                        <div class="subject-card biology bg-white p-4 rounded-xl shadow-md">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 text-biology flex items-center justify-center mb-3">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <h3 class="font-bold mb-2">Botany</h3>
+                            <p class="text-sm text-gray-600">Plant physiology and photosynthesis</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lab-window">
+                    <div class="lab-toolbar">
+                        <div class="lab-buttons">
+                            <div class="lab-button close"></div>
+                            <div class="lab-button minimize"></div>
+                            <div class="lab-button maximize"></div>
+                        </div>
+                        <div class="text-white text-sm">Microscope Simulation</div>
+                        <div class="w-40"></div>
+                    </div>
+                    <div class="lab-content simulation-area flex items-center justify-center">
+                        <div class="microscope-setup relative">
+                            <div class="w-48 h-20 bg-gray-300 rounded-t-lg"></div>
+                            <div class="w-12 h-40 bg-gray-400 mx-auto"></div>
+                            <div class="w-56 h-6 bg-gray-500 rounded-b-lg mx-auto"></div>
+                            <div class="absolute top-24 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-gray-900 rounded-full overflow-hidden">
+                                <div class="cell-slide absolute inset-2 bg-gray-700 rounded">
+                                    <div class="grid grid-cols-4 gap-2 p-3">
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-500"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-500"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                        <div class="w-5 h-5 rounded-full bg-green-400"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="floating-tool" style="top: 20px; left: 20px;">
+                            <i class="fas fa-sliders-h text-gray-600 text-xl mb-2"></i>
+                            <span class="text-xs">Focus Knob</span>
+                        </div>
+
+                        <div class="floating-tool" style="bottom: 20px; right: 20px;">
+                            <i class="fas fa-exchange-alt text-gray-600 text-xl mb-2"></i>
+                            <span class="text-xs">Objective Changer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quiz" class="tab-content">
+            <div class="bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">STEM Knowledge Challenge</h2>
+                <p class="text-gray-600 mb-8">Test your knowledge with these interactive quizzes. Select a subject to begin.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="quiz-subject bg-purple-100 p-6 rounded-xl text-center cursor-pointer transition hover:bg-purple-200">
+                        <div class="w-16 h-16 rounded-full bg-purple-200 text-physics flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-atom text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold mb-2">Physics Quiz</h3>
+                        <p class="text-sm text-gray-600">10 questions</p>
+                    </div>
+
+                    <div class="quiz-subject bg-pink-100 p-6 rounded-xl text-center cursor-pointer transition hover:bg-pink-200">
+                        <div class="w-16 h-16 rounded-full bg-pink-200 text-chemistry flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-flask text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold mb-2">Chemistry Quiz</h3>
+                        <p class="text-sm text-gray-600">10 questions</p>
+                    </div>
+
+                    <div class="quiz-subject bg-blue-100 p-6 rounded-xl text-center cursor-pointer transition hover:bg-blue-200">
+                        <div class="w-16 h-16 rounded-full bg-blue-200 text-biology flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-dna text-2xl"></i>
+                        </div>
+                        <h3 class="font-bold mb-2">Biology Quiz</h3>
+                        <p class="text-sm text-gray-600">10 questions</p>
+                    </div>
+                </div>
+
+                <div class="quiz-container bg-gray-50 p-6 rounded-xl">
+                    <h3 class="text-lg font-bold mb-4">Sample Physics Question</h3>
+                    <p class="mb-6">Which of the following best describes Newton's First Law of Motion?</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="quiz-option bg-white p-4 rounded-lg border border-gray-200 cursor-pointer transition hover:border-purple-300">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3">A</div>
+                                <p>For every action, there is an equal and opposite reaction</p>
+                            </div>
+                        </div>
+
+                        <div class="quiz-option bg-white p-4 rounded-lg border border-gray-200 cursor-pointer transition hover:border-purple-300">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3">B</div>
+                                <p>An object at rest stays at rest unless acted upon by an external force</p>
+                            </div>
+                        </div>
+
+                        <div class="quiz-option bg-white p-4 rounded-lg border border-gray-200 cursor-pointer transition hover:border-purple-300">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3">C</div>
+                                <p>Force equals mass times acceleration</p>
+                            </div>
+                        </div>
+
+                        <div class="quiz-option bg-white p-4 rounded-lg border border-gray-200 cursor-pointer transition hover:border-purple-300">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mr-3">D</div>
+                                <p>Energy cannot be created or destroyed, only transformed</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-between items-center">
+                        <div class="text-sm text-gray-500">Question 1 of 10</div>
+                        <button class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition">Next Question</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-12 mt-12">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">VL</div>
+                    <span class="text-xl font-bold">STEM Virtual Labs</span>
+                </div>
+                <p class="text-gray-400">Interactive virtual laboratories for STEM education</p>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold mb-4">Labs</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Physics</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Chemistry</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Biology</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Mathematics</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold mb-4">Resources</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Lesson Plans</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Worksheets</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Video Tutorials</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Teacher Guides</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold mb-4">Subscribe</h3>
+                <p class="text-gray-400 mb-4">Get updates on new labs and features</p>
+                <div class="flex">
+                    <input type="email" placeholder="Your email" class="bg-gray-700 text-white px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary w-full">
+                    <button class="bg-primary px-4 py-2 rounded-r-lg hover:bg-secondary transition">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-gray-400">© 2023 STEM Virtual Labs. All rights reserved.</p>
+            <div class="flex space-x-4 mt-4 md:mt-0">
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Tab switching functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.subject-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active', 'bg-primary', 'text-white'));
+                tab.classList.add('active', 'bg-primary', 'text-white');
+
+                // Show active tab content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Make equipment draggable
+        const equipment = document.querySelectorAll('.equipment');
+        equipment.forEach(item => {
+            let isDragging = false;
+            let offset = [0, 0];
+
+            item.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                offset = [
+                    item.offsetLeft - e.clientX,
+                    item.offsetTop - e.clientY
+                ];
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                e.preventDefault();
+                if (isDragging) {
+                    item.style.left = (e.clientX + offset[0]) + 'px';
+                    item.style.top = (e.clientY + offset[1]) + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+        });
+
+        // Quiz subject selection
+        const quizSubjects = document.querySelectorAll('.quiz-subject');
+        quizSubjects.forEach(subject => {
+            subject.addEventListener('click', () => {
+                alert('Quiz starting! This would open a full quiz interface in a complete implementation.');
+            });
+        });
+
+        // Quiz option selection
+        const quizOptions = document.querySelectorAll('.quiz-option');
+        quizOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                quizOptions.forEach(o => o.classList.remove('border-purple-500', 'bg-purple-50'));
+                option.classList.add('border-purple-500', 'bg-purple-50');
+            });
+        });
+    });
+</script>
+</body>
+</html>

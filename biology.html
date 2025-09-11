@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology Exploration Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1b5e20, #004d40, #0d47a1);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: #c8e6c9;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .nav-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #80deea;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .topic-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .topic-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #a5d6a7;
+        }
+
+        .projects-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #c5e1a5;
+        }
+
+        .facts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .fact-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .fact-icon {
+            font-size: 2rem;
+            color: #81c784;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            height: 200px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.1);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Particle effect */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        .biology-particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .topics-grid, .projects-container, .facts-container, .gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Animation for elements */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animated {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        /* Floating animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+
+<div class="container">
+    <header>
+        <h1><i class="fas fa-dna"></i> Biology Exploration Hub</h1>
+        <p class="subtitle">Discover the fascinating world of life, from cells to ecosystems</p>
+        <div class="nav">
+            <a href="#topics" class="nav-btn"><i class="fas fa-seedling"></i> Topics</a>
+            <a href="#projects" class="nav-btn"><i class="fas fa-microscope"></i> Projects</a>
+            <a href="#facts" class="nav-btn"><i class="fas fa-lightbulb"></i> Facts</a>
+            <a href="#gallery" class="nav-btn"><i class="fas fa-images"></i> Gallery</a>
+        </div>
+    </header>
+
+    <section id="topics" class="section animated">
+        <h2 class="section-title"><i class="fas fa-book-open"></i> Biology Topics</h2>
+        <div class="topics-grid">
+            <div class="topic-card animated delay-1">
+                <h3 class="topic-title">Cell Biology</h3>
+                <p>Study of cell structure and function, exploring the basic building blocks of all living organisms.</p>
+            </div>
+            <div class="topic-card animated delay-2">
+                <h3 class="topic-title">Genetics</h3>
+                <p>Examines genes, genetic variation, and heredity in living organisms, including DNA and inheritance patterns.</p>
+            </div>
+            <div class="topic-card animated delay-3">
+                <h3 class="topic-title">Ecology</h3>
+                <p>Investigates the relationships between living organisms and their physical environment.</p>
+            </div>
+            <div class="topic-card animated delay-1">
+                <h3 class="topic-title">Evolution</h3>
+                <p>Studies how species change over time through natural selection and genetic drift.</p>
+            </div>
+            <div class="topic-card animated delay-2">
+                <h3 class="topic-title">Anatomy & Physiology</h3>
+                <p>Explores the structure and function of the body systems in humans and other animals.</p>
+            </div>
+            <div class="topic-card animated delay-3">
+                <h3 class="topic-title">Microbiology</h3>
+                <p>Focuses on microorganisms including bacteria, viruses, archaea, fungi, and protozoa.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section animated">
+        <h2 class="section-title"><i class="fas fa-microscope"></i> Biology Projects</h2>
+        <div class="projects-container">
+            <div class="project-card animated delay-1">
+                <div class="project-img" style="background: linear-gradient(to bottom, #2e7d32, #1b5e20); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
+                    <i class="fas fa-dna"></i>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">DNA Extraction</h3>
+                    <p>Extract DNA from strawberries or other fruits using common household materials to understand genetic material.</p>
+                </div>
+            </div>
+            <div class="project-card animated delay-2">
+                <div class="project-img" style="background: linear-gradient(to bottom, #00695c, #004d40); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">Plant Growth Experiments</h3>
+                    <p>Test how different factors like light, water, or soil type affect plant growth and development.</p>
+                </div>
+            </div>
+            <div class="project-card animated delay-3">
+                <div class="project-img" style="background: linear-gradient(to bottom, #0277bd, #01579b); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
+                    <i class="fas fa-vial"></i>
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">Microscope Exploration</h3>
+                    <p>Collect samples from various environments and examine them under a microscope to discover microorganisms.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="facts" class="section animated">
+        <h2 class="section-title"><i class="fas fa-lightbulb"></i> Amazing Biology Facts</h2>
+        <div class="facts-container">
+            <div class="fact-card animated delay-1">
+                <div class="fact-icon"><i class="fas fa-dna"></i></div>
+                <p>If uncoiled, the DNA in all the cells in your body would stretch about 10 billion miles, beyond Pluto.</p>
+            </div>
+            <div class="fact-card animated delay-2">
+                <div class="fact-icon"><i class="fas fa-brain"></i></div>
+                <p>The human brain has about 86 billion neurons and can generate about 23 watts of power when awake.</p>
+            </div>
+            <div class="fact-card animated delay-3">
+                <div class="fact-icon"><i class="fas fa-heart"></i></div>
+                <p>Your heart beats about 100,000 times a day, pumping approximately 2,000 gallons of blood.</p>
+            </div>
+            <div class="fact-card animated delay-1">
+                <div class="fact-icon"><i class="fas fa-leaf"></i></div>
+                <p>There are more microorganisms in one teaspoon of soil than there are people on Earth.</p>
+            </div>
+            <div class="fact-card animated delay-2">
+                <div class="fact-icon"><i class="fas fa-dna"></i></div>
+                <p>Humans share about 60% of their DNA with bananas and 98% with chimpanzees.</p>
+            </div>
+            <div class="fact-card animated delay-3">
+                <div class="fact-icon"><i class="fas fa-lungs"></i></div>
+                <p>The surface area of human lungs is approximately equal to that of a tennis court.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="section animated">
+        <h2 class="section-title"><i class="fas fa-images"></i> Biology Gallery</h2>
+        <div class="gallery">
+            <div class="gallery-item animated delay-1">
+                <div class="gallery-img" style="background: linear-gradient(to bottom, #558b2f, #33691e);"></div>
+                <div class="gallery-caption">Plant cell structure</div>
+            </div>
+            <div class="gallery-item animated delay-2">
+                <div class="gallery-img" style="background: linear-gradient(to bottom, #00838f, #006064);"></div>
+                <div class="gallery-caption">Marine ecosystems</div>
+            </div>
+            <div class="gallery-item animated delay-3">
+                <div class="gallery-img" style="background: linear-gradient(to bottom, #6a1b9a, #4a148c);"></div>
+                <div class="gallery-caption">DNA double helix</div>
+            </div>
+            <div class="gallery-item animated delay-1">
+                <div class="gallery-img" style="background: linear-gradient(to bottom, #ff6f00, #e65100);"></div>
+                <div class="gallery-caption">Human anatomy</div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="animated">
+        <p>Biology Exploration Hub &copy; 2023 | Discover the wonders of life sciences</p>
+        <p>Created with <i class="fas fa-heart" style="color: #e91e63;"></i> for science enthusiasts</p>
+    </footer>
+</div>
+
+<script>
+    // Create particle effect on cursor movement
+    document.addEventListener('DOMContentLoaded', function() {
+        const particlesContainer = document.getElementById('particles');
+
+        // Create particles on mouse move
+        document.addEventListener('mousemove', function(e) {
+            createParticle(e.clientX, e.clientY);
+            createBiologyParticle(e.clientX, e.clientY);
+        });
+
+        // Create particles on touch move for mobile devices
+        document.addEventListener('touchmove', function(e) {
+            createParticle(e.touches[0].clientX, e.touches[0].clientY);
+            createBiologyParticle(e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+
+            // Random size between 3 and 8 pixels
+            const size = Math.random() * 5 + 3;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+
+            // Position at cursor
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+
+            // Random color with opacity
+            const colors = ['rgba(255, 255, 255, 0.6)', 'rgba(173, 216, 230, 0.6)',
+                'rgba(166, 216, 166, 0.6)', 'rgba(152, 251, 152, 0.6)'];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+            particlesContainer.appendChild(particle);
+
+            // Animate particle
+            const moveX = (Math.random() - 0.5) * 100;
+            const moveY = (Math.random() - 0.5) * 100;
+
+            particle.animate([
+                { transform: `translate(0, 0)`, opacity: 1 },
+                { transform: `translate(${moveX}px, ${moveY}px)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 1000 + 500,
+                easing: 'ease-out'
+            });
+
+            // Remove particle after animation
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
+
+        // Create biology-themed particles (cells, organisms)
+        function createBiologyParticle(x, y) {
+            if (Math.random() > 0.7) { // Only create sometimes
+                const particle = document.createElement('div');
+                particle.classList.add('biology-particle');
+
+                // Random biology icon
+                const icons = ['fa-dna', 'fa-seedling', 'fa-bacteria', 'fa-leaf', 'fa-cube'];
+                const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+
+                particle.innerHTML = `<i class="fas ${randomIcon}"></i>`;
+                particle.style.fontSize = `${Math.random() * 20 + 10}px`;
+                particle.style.color = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.3})`;
+
+                // Position at cursor
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+
+                particlesContainer.appendChild(particle);
+
+                // Animate particle
+                const moveX = (Math.random() - 0.5) * 200;
+                const moveY = (Math.random() - 0.5) * 200;
+
+                particle.animate([
+                    { transform: `translate(0, 0) rotate(0deg)`, opacity: 0.8 },
+                    { transform: `translate(${moveX}px, ${moveY}px) rotate(360deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 1000,
+                    easing: 'ease-out'
+                });
+
+                // Remove particle after animation
+                setTimeout(() => {
+                    particle.remove();
+                }, 3000);
+            }
+        }
+
+        // Add scroll animation
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section, footer').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                window.scrollTo({
+                    top: targetElement.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add floating animation to some elements
+        document.querySelectorAll('h1, .section-title').forEach(el => {
+            el.classList.add('floating');
+        });
+    });
+</script>
+</body>
+</html>

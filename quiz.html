@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster - Interactive Learning Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .subject-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .subject-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-color: #4a00e0;
+        }
+
+        .subject-card.active {
+            background: #eef4ff;
+            border-color: #4a00e0;
+            box-shadow: 0 5px 15px rgba(74, 0, 224, 0.2);
+        }
+
+        .subject-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #4a00e0;
+        }
+
+        .subject-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .quiz-container {
+            display: none;
+            border-top: 1px solid #eee;
+            padding-top: 25px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #eef4ff;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question-count {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .question {
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option {
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            border: 2px solid transparent;
+        }
+
+        .option:hover {
+            background: #eef4ff;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #eef4ff;
+            border-color: #4a00e0;
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .option-letter {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            background: #dee2e6;
+            color: #495057;
+            border-radius: 50%;
+            margin-right: 15px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: #4a00e0;
+            color: white;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 0, 224, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ced4da;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .results {
+            text-align: center;
+            padding: 40px 30px;
+            display: none;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 25px;
+            border: 5px solid #4a00e0;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4a00e0;
+        }
+
+        .score-text {
+            font-size: 1.1rem;
+            color: #6c757d;
+        }
+
+        .message {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #4a00e0;
+            font-weight: 600;
+        }
+
+        .explanation {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            color: #495057;
+            border-left: 4px solid #4a00e0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .subject-selection {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .question {
+                font-size: 1.2rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .subject-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-graduation-cap"></i> QuizMaster</h1>
+        <p>Test your knowledge across various subjects</p>
+    </div>
+
+    <div class="content">
+        <div class="subject-selection">
+            <div class="subject-card" data-subject="math">
+                <div class="subject-icon"><i class="fas fa-calculator"></i></div>
+                <div class="subject-name">Mathematics</div>
+            </div>
+            <div class="subject-card" data-subject="science">
+                <div class="subject-icon"><i class="fas fa-flask"></i></div>
+                <div class="subject-name">Science</div>
+            </div>
+            <div class="subject-card" data-subject="history">
+                <div class="subject-icon"><i class="fas fa-monument"></i></div>
+                <div class="subject-name">History</div>
+            </div>
+            <div class="subject-card" data-subject="english">
+                <div class="subject-icon"><i class="fas fa-book"></i></div>
+                <div class="subject-name">English</div>
+            </div>
+            <div class="subject-card" data-subject="geography">
+                <div class="subject-icon"><i class="fas fa-globe-americas"></i></div>
+                <div class="subject-name">Geography</div>
+            </div>
+        </div>
+
+        <div class="quiz-container" id="quiz-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="question-count" id="question-count">Question 1 of 3</div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="explanation" id="explanation"></div>
+
+            <div class="navigation">
+                <button class="btn" id="prev-btn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="btn" id="next-btn">Next <i class="fas fa-arrow-right"></i></button>
+                <button class="btn" id="submit-btn" style="display: none;"><i class="fas fa-paper-plane"></i> Submit Quiz</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="score-circle">
+                <div class="score-value" id="score-value">0</div>
+                <div class="score-text">Score</div>
+            </div>
+            <div class="message" id="message">Well done!</div>
+            <p>You've completed the quiz. Select another subject to continue testing your knowledge.</p>
+            <button class="btn" id="restart-btn" style="margin-top: 20px;"><i class="fas fa-redo"></i> Try Another Quiz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Quiz data for different subjects
+    const quizData = {
+        math: [
+            {
+                question: "What is the value of π (pi) rounded to two decimal places?",
+                options: ["3.14", "3.16", "3.12", "3.18"],
+                answer: 0,
+                explanation: "π is approximately 3.14159, which rounds to 3.14 when rounded to two decimal places."
+            },
+            {
+                question: "Solve for x: 2x + 5 = 15",
+                options: ["x = 5", "x = 10", "x = 7.5", "x = 5.5"],
+                answer: 0,
+                explanation: "Subtract 5 from both sides: 2x = 10, then divide both sides by 2: x = 5."
+            },
+            {
+                question: "What is the area of a circle with radius 5 units?",
+                options: ["25π", "10π", "5π", "100π"],
+                answer: 0,
+                explanation: "The area of a circle is calculated as πr². With r=5, area = π(5)² = 25π."
+            },
+            {
+                question: "What is 8² + 3 × 4 ÷ 2?",
+                options: ["38", "70", "56", "44"],
+                answer: 1,
+                explanation: "Following order of operations (PEMDAS): 8² = 64, 3×4=12, 12÷2=6, then 64+6=70."
+            }
+        ],
+        science: [
+            {
+                question: "What is the chemical symbol for gold?",
+                options: ["Go", "Gd", "Au", "Ag"],
+                answer: 2,
+                explanation: "The chemical symbol for gold is Au, derived from the Latin word 'aurum' meaning gold."
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Venus", "Mars", "Jupiter", "Mercury"],
+                answer: 1,
+                explanation: "Mars is called the Red Planet due to its reddish appearance, which is caused by iron oxide (rust) on its surface."
+            },
+            {
+                question: "What is the smallest unit of life?",
+                options: ["Atom", "Cell", "Molecule", "Tissue"],
+                answer: 1,
+                explanation: "The cell is the smallest structural and functional unit of living organisms, often called the 'building block of life'."
+            },
+            {
+                question: "Which gas do plants absorb from the atmosphere?",
+                options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
+                answer: 2,
+                explanation: "Plants absorb carbon dioxide (CO₂) from the atmosphere during photosynthesis to produce glucose and oxygen."
+            }
+        ],
+        history: [
+            {
+                question: "In which year did World War II end?",
+                options: ["1943", "1945", "1947", "1950"],
+                answer: 1,
+                explanation: "World War II ended in 1945, with Victory in Europe Day (VE Day) on May 8 and Victory over Japan Day (VJ Day) on September 2."
+            },
+            {
+                question: "Who was the first President of the United States?",
+                options: ["Thomas Jefferson", "John Adams", "George Washington", "Benjamin Franklin"],
+                answer: 2,
+                explanation: "George Washington was unanimously elected as the first President of the United States and served from 1789 to 1797."
+            },
+            {
+                question: "The ancient civilization of Mesopotamia was located in which modern-day country?",
+                options: ["Egypt", "Greece", "Iraq", "Iran"],
+                answer: 2,
+                explanation: "Mesopotamia, meaning 'between rivers' (Tigris and Euphrates), was located in what is now primarily Iraq, as well as parts of Syria and Turkey."
+            },
+            {
+                question: "Which empire was ruled by Julius Caesar?",
+                options: ["Greek", "Persian", "Roman", "Ottoman"],
+                answer: 2,
+                explanation: "Julius Caesar was a renowned leader of the Roman Empire, who played a critical role in the events that led to the demise of the Roman Republic and the rise of the Roman Empire."
+            }
+        ],
+        english: [
+            {
+                question: "Which of these is a preposition?",
+                options: ["run", "beautiful", "under", "quickly"],
+                answer: 2,
+                explanation: "A preposition shows the relationship between a noun (or pronoun) and other words in a sentence. 'Under' is a preposition indicating position."
+            },
+            {
+                question: "Who wrote 'Romeo and Juliet'?",
+                options: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
+                answer: 1,
+                explanation: "William Shakespeare wrote the tragic play 'Romeo and Juliet' between 1591 and 1595."
+            },
+            {
+                question: "What is the past tense of 'bring'?",
+                options: ["brang", "brought", "bringed", "brings"],
+                answer: 1,
+                explanation: "The correct past tense of 'bring' is 'brought'. It's an irregular verb that doesn't follow the standard -ed pattern."
+            },
+            {
+                question: "Which of these is a simile?",
+                options: ["The world is a stage", "Her smile was like sunshine", "I'm so hungry I could eat a horse", "The wind whispered through the trees"],
+                answer: 1,
+                explanation: "A simile is a figure of speech that directly compares two things using 'like' or 'as'. 'Her smile was like sunshine' is a simile."
+            }
+        ],
+        geography: [
+            {
+                question: "Which is the longest river in the world?",
+                options: ["Amazon", "Nile", "Mississippi", "Yangtze"],
+                answer: 1,
+                explanation: "The Nile River in Africa is generally considered the longest river in the world at approximately 4,135 miles (6,650 km) long."
+            },
+            {
+                question: "What is the capital of Australia?",
+                options: ["Sydney", "Melbourne", "Canberra", "Perth"],
+                answer: 2,
+                explanation: "Canberra is the capital city of Australia. It was chosen as a compromise between rivals Sydney and Melbourne."
+            },
+            {
+                question: "Which desert is the largest in the world?",
+                options: ["Sahara", "Gobi", "Arabian", "Antarctic"],
+                answer: 3,
+                explanation: "The Antarctic Polar Desert is the largest desert in the world, covering about 5.5 million square miles. A desert is defined by low precipitation, not just sand."
+            },
+            {
+                question: "Which country has the largest population in the world?",
+                options: ["India", "United States", "China", "Russia"],
+                answer: 2,
+                explanation: "China has the largest population in the world with over 1.4 billion people, though India is projected to overtake China in the near future."
+            }
+        ]
+    };
+
+    // DOM elements
+    const subjectCards = document.querySelectorAll('.subject-card');
+    const quizContainer = document.getElementById('quiz-container');
+    const questionCountElement = document.getElementById('question-count');
+    const questionElement = document.getElementById('question');
+    const optionsElement = document.getElementById('options');
+    const explanationElement = document.getElementById('explanation');
+    const progressElement = document.getElementById('progress');
+    const prevButton = document.getElementById('prev-btn');
+    const nextButton = document.getElementById('next-btn');
+    const submitButton = document.getElementById('submit-btn');
+    const resultsContainer = document.getElementById('results');
+    const scoreValueElement = document.getElementById('score-value');
+    const messageElement = document.getElementById('message');
+    const restartButton = document.getElementById('restart-btn');
+
+    // Quiz state variables
+    let currentSubject = null;
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let score = 0;
+
+    // Event listeners for subject selection
+    subjectCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const subject = card.getAttribute('data-subject');
+            selectSubject(subject);
+        });
+    });
+
+    // Event listeners for navigation
+    prevButton.addEventListener('click', showPreviousQuestion);
+    nextButton.addEventListener('click', showNextQuestion);
+    submitButton.addEventListener('click', showResults);
+    restartButton.addEventListener('click', restartQuiz);
+
+    // Function to handle subject selection
+    function selectSubject(subject) {
+        // Remove active class from all cards
+        subjectCards.forEach(card => card.classList.remove('active'));
+
+        // Add active class to selected card
+        document.querySelector(`[data-subject="${subject}"]`).classList.add('active');
+
+        // Set current subject and questions
+        currentSubject = subject;
+        currentQuestions = quizData[subject];
+        currentQuestionIndex = 0;
+        userAnswers = new Array(currentQuestions.length).fill(null);
+
+        // Show quiz container and hide results
+        quizContainer.style.display = 'block';
+        resultsContainer.style.display = 'none';
+
+        // Display first question
+        displayQuestion();
+    }
+
+    // Function to display the current question
+    function displayQuestion() {
+        const question = currentQuestions[currentQuestionIndex];
+        questionCountElement.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
+        questionElement.textContent = question.question;
+
+        // Update progress bar
+        progressElement.style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
+
+        // Clear previous options
+        optionsElement.innerHTML = '';
+        explanationElement.textContent = '';
+
+        // Create new options
+        const optionLetters = ['A', 'B', 'C', 'D'];
+        question.options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.classList.add('option');
+
+            // If user has already selected this option, mark it
+            if (userAnswers[currentQuestionIndex] === index) {
+                optionElement.classList.add('selected');
+            }
+
+            optionElement.innerHTML = `
+                    <span class="option-letter">${optionLetters[index]}</span>
+                    <span class="option-text">${option}</span>
+                `;
+
+            optionElement.addEventListener('click', () => selectOption(index));
+            optionsElement.appendChild(optionElement);
+        });
+
+        // Update navigation buttons
+        prevButton.disabled = currentQuestionIndex === 0;
+
+        if (currentQuestionIndex === currentQuestions.length - 1) {
+            nextButton.style.display = 'none';
+            submitButton.style.display = 'block';
+        } else {
+            nextButton.style.display = 'block';
+            submitButton.style.display = 'none';
+        }
+    }
+
+    // Function to handle option selection
+    function selectOption(optionIndex) {
+        // Save user's answer
+        userAnswers[currentQuestionIndex] = optionIndex;
+
+        // Update UI to show selected option
+        const options = optionsElement.querySelectorAll('.option');
+        options.forEach((option, index) => {
+            if (index === optionIndex) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+        });
+    }
+
+    // Function to show next question
+    function showNextQuestion() {
+        if (currentQuestionIndex < currentQuestions.length - 1) {
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+    }
+
+    // Function to show previous question
+    function showPreviousQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            displayQuestion();
+        }
+    }
+
+    // Function to calculate and show results
+    function showResults() {
+        // Calculate score
+        score = 0;
+        currentQuestions.forEach((question, index) => {
+            if (userAnswers[index] === question.answer) {
+                score++;
+            }
+        });
+
+        // Display score
+        scoreValueElement.textContent = `${score}/${currentQuestions.length}`;
+
+        // Set message based on score
+        const percentage = (score / currentQuestions.length) * 100;
+        if (percentage >= 80) {
+            messageElement.textContent = "Excellent job!";
+        } else if (percentage >= 60) {
+            messageElement.textContent = "Good effort!";
+        } else if (percentage >= 40) {
+            messageElement.textContent = "Not bad!";
+        } else {
+            messageElement.textContent = "Keep learning!";
+        }
+
+        // Hide quiz container and show results
+        quizContainer.style.display = 'none';
+        resultsContainer.style.display = 'block';
+    }
+
+    // Function to restart the quiz
+    function restartQuiz() {
+        resultsContainer.style.display = 'none';
+        currentSubject = null;
+        userAnswers = [];
+
+        // Remove active class from all cards
+        subjectCards.forEach(card => card.classList.remove('active'));
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Teacher Dashboard - STEM-GAMIFIED LEARNING APP</title>
+    <style>
+        /* Reset and base */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4ff;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            width: 100%;
+            max-width: 1200px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(38, 0, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        header h1 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: 1.2px;
+        }
+        button.logout-btn {
+            background: #ff4b5c;
+            border: none;
+            color: white;
+            padding: 12px 22px;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 75, 92, 0.5);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            user-select: none;
+        }
+        button.logout-btn:hover {
+            background: #e03e4e;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(224, 62, 78, 0.7);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* Responsive grid for smaller screens */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card style */
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
+            padding: 25px 30px;
+            display: flex;
+            flex-direction: column;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .card h2 {
+            color: #2575fc;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.6rem;
+            border-bottom: 3px solid #6a11cb;
+            padding-bottom: 8px;
+        }
+
+        /* Search input */
+        .search-input {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            width: 100%;
+        }
+        .search-input:focus {
+            border-color: #6a11cb;
+            outline: none;
+            box-shadow: 0 0 8px rgba(106, 17, 203, 0.3);
+        }
+
+        /* Attendance Table */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+            font-size: 0.95rem;
+        }
+        thead tr {
+            background: transparent;
+        }
+        th {
+            text-align: left;
+            padding: 12px 15px;
+            color: #555;
+            font-weight: 600;
+            font-size: 1rem;
+            user-select: none;
+        }
+        tbody tr {
+            background: #f9faff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(38, 0, 255, 0.05);
+            transition: background-color 0.3s ease;
+        }
+        tbody tr:hover {
+            background-color: #e6f0ff;
+        }
+        td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        /* Attendance toggle button */
+        .attendance-toggle {
+            cursor: pointer;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            user-select: none;
+            display: inline-block;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            user-select: none;
+            border: none;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .attendance-toggle.present {
+            background-color: #28a745;
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.5);
+        }
+        .attendance-toggle.absent {
+            background-color: #dc3545;
+            box-shadow: 0 6px 15px rgba(220, 53, 69, 0.5);
+        }
+        .attendance-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        /* Activities Table */
+        #activities-table {
+            font-size: 0.95rem;
+        }
+
+        /* Lecture Details */
+        #lecture-section {
+            grid-column: span 2;
+            max-width: 1200px;
+            width: 100%;
+            margin-top: 0;
+        }
+        #lecture-section .card {
+            max-height: none;
+            overflow: visible;
+        }
+        .lecture-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        .lecture-header h2 {
+            margin: 0;
+        }
+        .toggle-icon {
+            font-size: 1.8rem;
+            color: #2575fc;
+            transition: transform 0.3s ease;
+            user-select: none;
+        }
+        .toggle-icon.rotate {
+            transform: rotate(180deg);
+        }
+        .lecture-content {
+            margin-top: 15px;
+            line-height: 1.6;
+            color: #444;
+            font-size: 1rem;
+            display: none;
+            border-left: 4px solid #6a11cb;
+            padding-left: 15px;
+            background: #eef4ff;
+            border-radius: 8px;
+        }
+        .lecture-content.show {
+            display: block;
+            animation: fadeInSlideDown 0.4s ease forwards;
+        }
+        @keyframes fadeInSlideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar styling for containers */
+        .card::-webkit-scrollbar {
+            width: 8px;
+        }
+        .card::-webkit-scrollbar-track {
+            background: #f0f4ff;
+            border-radius: 10px;
+        }
+        .card::-webkit-scrollbar-thumb {
+            background: #6a11cb;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Teacher Dashboard</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+    <!-- Attendance Section -->
+    <section class="card" id="attendance-section">
+        <h2>Student Attendance</h2>
+        <input
+                type="text"
+                class="search-input"
+                id="attendanceSearch"
+                placeholder="Search students..."
+                oninput="filterAttendance()"
+                aria-label="Search students for attendance"
+        />
+        <table id="attendance-table" aria-describedby="attendance-section">
+            <thead>
+            <tr>
+                <th scope="col">Student Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Attendance</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Student rows inserted by JS -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Activities Section -->
+    <section class="card" id="activities-section">
+        <h2>Student Activities</h2>
+        <input
+                type="text"
+                class="search-input"
+                id="activitiesSearch"
+                placeholder="Search activities..."
+                oninput="filterActivities()"
+                aria-label="Search student activities"
+        />
+        <table id="activities-table" aria-describedby="activities-section">
+            <thead>
+            <tr>
+                <th scope="col">Student Name</th>
+                <th scope="col">Activity</th>
+                <th scope="col">Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Activity rows inserted by JS -->
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<!-- Lecture Details Section -->
+<section class="card" id="lecture-section" aria-label="Lecture details">
+    <div class="lecture-header" tabindex="0" role="button" aria-expanded="false" aria-controls="lectureContent" onclick="toggleLectureDetails()" onkeypress="if(event.key==='Enter' || event.key===' ') toggleLectureDetails()">
+        <h2>Lecture Details</h2>
+        <span class="toggle-icon" id="toggleIcon">&#9660;</span>
+    </div>
+    <div class="lecture-content" id="lectureContent" tabindex="0" aria-live="polite">
+        <!-- Lecture details inserted by JS -->
+    </div>
+</section>
+
+<script>
+    // Sample data - replace with real data from backend
+    const students = [
+        { id: 1, name: 'Alice Johnson', email: 'alice@example.com', attendance: true },
+        { id: 2, name: 'Bob Smith', email: 'bob@example.com', attendance: false },
+        { id: 3, name: 'Charlie Lee', email: 'charlie@example.com', attendance: true },
+        { id: 4, name: 'Diana Prince', email: 'diana@example.com', attendance: true },
+        { id: 5, name: 'Ethan Hunt', email: 'ethan@example.com', attendance: false },
+    ];
+
+    const activities = [
+        { studentId: 1, activity: 'Completed Quiz 1', date: '2024-06-01' },
+        { studentId: 2, activity: 'Submitted Assignment 2', date: '2024-06-02' },
+        { studentId: 3, activity: 'Participated in Discussion', date: '2024-06-03' },
+        { studentId: 1, activity: 'Watched Lecture 3', date: '2024-06-04' },
+        { studentId: 4, activity: 'Completed Quiz 2', date: '2024-06-05' },
+        { studentId: 5, activity: 'Missed Assignment Deadline', date: '2024-06-05' },
+    ];
+
+    const lectureInfo = `
+      <p><strong>Topic:</strong> Introduction to Algebra</p>
+      <p><strong>Date:</strong> June 5, 2024</p>
+      <p><strong>Duration:</strong> 1 hour</p>
+      <p><strong>Description:</strong> This lecture covers the basics of algebra including variables, expressions, and equations.</p>
+    `;
+
+    // Render attendance table rows
+    function renderAttendance(filteredStudents = null) {
+        const tbody = document.querySelector('#attendance-table tbody');
+        tbody.innerHTML = '';
+        const list = filteredStudents || students;
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#999;">No students found.</td></tr>';
+            return;
+        }
+        list.forEach(student => {
+            const tr = document.createElement('tr');
+
+            const nameTd = document.createElement('td');
+            nameTd.textContent = student.name;
+            tr.appendChild(nameTd);
+
+            const emailTd = document.createElement('td');
+            emailTd.textContent = student.email;
+            tr.appendChild(emailTd);
+
+            const attendanceTd = document.createElement('td');
+            const attendanceBtn = document.createElement('button');
+            attendanceBtn.classList.add('attendance-toggle');
+            attendanceBtn.classList.add(student.attendance ? 'present' : 'absent');
+            attendanceBtn.textContent = student.attendance ? 'Present' : 'Absent';
+            attendanceBtn.setAttribute('aria-pressed', student.attendance);
+            attendanceBtn.setAttribute('aria-label', `Mark ${student.name} as ${student.attendance ? 'absent' : 'present'}`);
+            attendanceBtn.onclick = () => toggleAttendance(student.id, attendanceBtn);
+            attendanceTd.appendChild(attendanceBtn);
+            tr.appendChild(attendanceTd);
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Toggle attendance status
+    function toggleAttendance(studentId, btn) {
+        const student = students.find(s => s.id === studentId);
+        if (!student) return;
+
+        student.attendance = !student.attendance;
+        btn.textContent = student.attendance ? 'Present' : 'Absent';
+        btn.classList.toggle('present');
+        btn.classList.toggle('absent');
+        btn.setAttribute('aria-pressed', student.attendance);
+        btn.setAttribute('aria-label', `Mark ${student.name} as ${student.attendance ? 'absent' : 'present'}`);
+
+        // TODO: Send updated attendance to server here
+        console.log(`Attendance for ${student.name} set to ${student.attendance ? 'Present' : 'Absent'}`);
+    }
+
+    // Render activities table rows
+    function renderActivities(filteredActivities = null) {
+        const tbody = document.querySelector('#activities-table tbody');
+        tbody.innerHTML = '';
+        const list = filteredActivities || activities;
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#999;">No activities found.</td></tr>';
+            return;
+        }
+        list.forEach(activity => {
+            const student = students.find(s => s.id === activity.studentId);
+            if (!student) return;
+
+            const tr = document.createElement('tr');
+
+            const nameTd = document.createElement('td');
+            nameTd.textContent = student.name;
+            tr.appendChild(nameTd);
+
+            const activityTd = document.createElement('td');
+            activityTd.textContent = activity.activity;
+            tr.appendChild(activityTd);
+
+            const dateTd = document.createElement('td');
+            dateTd.textContent = activity.date;
+            tr.appendChild(dateTd);
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Filter attendance table based on search input
+    function filterAttendance() {
+        const query = document.getElementById('attendanceSearch').value.toLowerCase();
+        const filtered = students.filter(s =>
+            s.name.toLowerCase().includes(query) || s.email.toLowerCase().includes(query)
+        );
+        renderAttendance(filtered);
+    }
+
+    // Filter activities table based on search input
+    function filterActivities() {
+        const query = document.getElementById('activitiesSearch').value.toLowerCase();
+        const filtered = activities.filter(a => {
+            const student = students.find(s => s.id === a.studentId);
+            if (!student) return false;
+            return (
+                student.name.toLowerCase().includes(query) ||
+                a.activity.toLowerCase().includes(query) ||
+                a.date.includes(query)
+            );
+        });
+        renderActivities(filtered);
+    }
+
+    // Toggle lecture details visibility
+    function toggleLectureDetails() {
+        const content = document.getElementById('lectureContent');
+        const icon = document.getElementById('toggleIcon');
+        const expanded = content.classList.toggle('show');
+        icon.classList.toggle('rotate', expanded);
+
+        // Update aria-expanded for accessibility
+        const header = document.querySelector('.lecture-header');
+        header.setAttribute('aria-expanded', expanded);
+    }
+
+    // Logout function (redirect to login page)
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            window.location.href = 'index.html'; // Adjust to your login page
+        }
+    }
+
+    // Initialize dashboard
+    function init() {
+        renderAttendance();
+        renderActivities();
+        document.getElementById('lectureContent').innerHTML = lectureInfo;
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
